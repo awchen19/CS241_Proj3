@@ -45,16 +45,18 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        
-        utilities1 = util.Counter([(s, 0) for s in mdp.getStates()])
 
-        for i in range(iterations):
-            
-            utilities = utilities1
+        while iterations > 0:
             for s in mdp.getStates():
-                utilities1[s] = mdp.getReward(s, self.getAction(s), mdp.getStates()[s+1]) + discount * max([sum([mdp.getTransitionStatesAndProb(s, mdp.getAction(s))})
+                v = self.values[s]
+                for a in mdp.getPossibleActions(s):
+                    temp_sum = 0
+                    for s_prime, p in mdp.getTransitionStatesAndProbs(s, a):
+                        r = mdp.getReward(s, a, s_prime)
+                        temp_sum += p*(r + self.discount*self.values[s_prime])
+                    self.values[s] = max(self.values[s], temp_sum)
 
-        return utilities
+            iterations -= 1
 
         
     def getValue(self, state):
@@ -82,8 +84,24 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        actions = self.mdp.getPossibleActions(state);
+        
+        if (actions == None):
+            return None
+        
+        possibleActions = util.Counter()
+        i = 0
+        
+        for a in actions:
+            for s_prime, p in self.mdp.getTransitionStatesAndProbs(state, a):
+                possibleActions[i] = p * self.getValue(s_prime)
+                i = i+1
 
+        bestActions = possibleActions.argMax()
+
+        return bestActions
+                
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
 
