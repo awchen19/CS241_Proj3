@@ -45,18 +45,8 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        
-        utilities1 = util.Counter([(s, 0) for s in mdp.getStates()])
 
-        for i in range(iterations):
-            
-            utilities = utilities1
-            for s in mdp.getStates():
-                utilities1[s] = mdp.getReward(s, self.getAction(s), mdp.getStates()[s+1]) + discount * max([sum([mdp.getTransitionStatesAndProb(s, mdp.getAction(s))})
 
-        return utilities
-
-        
     def getValue(self, state):
         """
           Return the value of the state (computed in __init__).
