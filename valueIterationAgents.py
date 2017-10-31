@@ -42,9 +42,30 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.discount = discount
         self.iterations = iterations
         self.values = util.Counter() # A Counter is a dict with default 0
-
+	
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
+        v_temp = util.Counter()
+        while iterations > 0:
+			v_temp = util.Counter()
+			for s in self.mdp.getStates():
+				if self.mdp.isTerminal(s):
+					v_temp[s] = 0
+					continue					
+				v = self.values[s]
+				v_temp[s] = float('-inf')
+				for a in self.mdp.getPossibleActions(s):
+					temp_sum = 0
+					for s_prime, p in self.mdp.getTransitionStatesAndProbs(s, a):
+						r = self.mdp.getReward(s, a, s_prime)
+						temp_sum += p*(r + self.discount*self.values[ s_prime ])
+					v_temp[s] = max(v_temp[s], temp_sum)
+					
+					
+			iterations -= 1
+			self.values = v_temp
+						
+		
 
 
     def getValue(self, state):
@@ -60,6 +81,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
+        q = 0
+        for s_prime, p in self.mdp.getTransitionStatesAndProbs(state, action):
+			r = self.mdp.getReward(state, action, s_prime)
+			q += p*(r + self.discount*self.values[s_prime])
+        return q
+			
         util.raiseNotDefined()
 
     def computeActionFromValues(self, state):
@@ -72,6 +99,15 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
+        best_action = None
+        q_best = float("-inf")			
+        for action in self.mdp.getPossibleActions(state):
+			q = self.computeQValueFromValues(state, action)
+			if q > q_best:
+				best_action = action
+				q_best = q
+        return best_action
+			
         util.raiseNotDefined()
 
     def getPolicy(self, state):
