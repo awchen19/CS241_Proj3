@@ -111,6 +111,14 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
+        Q = lambda s,a: return self.getQValue(s, a)
+        new_q = Q(state, action)
+        diff = lambda s_prime, s, a_prime, a: Q(s_prime, a_prime) - Q(s, a_prime) # The difference in the maximization
+		maxx = max( [(nextState, state, a_p, action) for a_p in self.getAction(state)], key = diff ) #Maximize based on the difference
+		new_q += self.alpha*(reward + self.discount * maxx)
+		return new_q
+		
+			
         util.raiseNotDefined()
 
     def getPolicy(self, state):
