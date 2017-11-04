@@ -58,8 +58,6 @@ class QLearningAgent(ReinforcementAgent):
         if key not in self.q_values:
             self.q_values[key] = 0.0
         return self.q_values[key]
- 
- 
        
     def computeValueFromQValues(self, state):
         """
@@ -80,7 +78,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         if self.isTerminalState(state):
-            return
+            return None
         q = self.computeValueFromQValues(state)
         for a in self.getLegalActions(state):
             if self.getQValue(state, a) == q:
@@ -104,15 +102,12 @@ class QLearningAgent(ReinforcementAgent):
        
         # if no legal actions, return None
         if self.isTerminalState(state):
-            return
-           
-        # take random action with proability epsilon
-        if (util.flipCoin(self.epsilon)):
-            action = random.choice(legalActions)
+            return action
+
+        if (util.flipCoin(1-self.epsilon)):
+            return self.computeActionFromQValues(state)
         else:
-            action = self.computeValueFromQValues(state)
-           
-        return action
+            return random.choice(legalActions)
  
     def update(self, state, action, nextState, reward):
         """
@@ -208,4 +203,4 @@ class ApproximateQAgent(PacmanQAgent):
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
 
-                pass
+            pass
