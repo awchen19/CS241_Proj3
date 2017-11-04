@@ -88,8 +88,17 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        
+        # if no legal actions, return None
+        if (!legalActions):
+            return action
+        
+        # take random action with proability epsilon
+        if (util.flipCoin(self.epsilon)):
+            action = random.choice(legalActions)
+        else:
+            action = computeValueFromQValues(state)
+            
         return action
 
     def update(self, state, action, nextState, reward):
@@ -102,6 +111,14 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
+        Q = lambda s,a: return self.getQValue(s, a)
+        new_q = Q(state, action)
+        diff = lambda s_prime, s, a_prime, a: Q(s_prime, a_prime) - Q(s, a_prime) # The difference in the maximization
+		maxx = max( [(nextState, state, a_p, action) for a_p in self.getAction(state)], key = diff ) #Maximize based on the difference
+		new_q += self.alpha*(reward + self.discount * maxx)
+		return new_q
+		
+			
         util.raiseNotDefined()
 
     def getPolicy(self, state):
