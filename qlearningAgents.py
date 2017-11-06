@@ -184,8 +184,9 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         Q_value = 0.0
-        for feature in self.featExtractor.getFeatures(state,action):
-            Q_value = self.weights[(state,action)]*feature
+        features = self.featExtractor.getFeatures(state,action)
+        for feature in features:
+            Q_value += self.weights[feature]*features[feature]
 
         return Q_value
  
@@ -194,9 +195,11 @@ class ApproximateQAgent(PacmanQAgent):
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
-        
-        self.weights[(state,action)] = self.weights[(state,action)] + self.alpha*(reward + self.discount*self.computeValueFromQValues(nextState) - self.getQValue(state,action))*self.featExtractor.getFeatures(state,action)
- 
+        delta = (reward + self.discount*self.computeValueFromQValues(nextState) - self.getQValue(state,action))
+        features = self.featExtractor.getFeatures(state, action)
+        for feature in features:
+			self.weights[feature] += self.alpha * features[feature] * delta		       
+            
     def final(self, state):
         "Called at the end of each game."
         # call the super-class final method
